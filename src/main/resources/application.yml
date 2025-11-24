@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/master_detail_db
+    username: postgres
+    password: rootroot
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none  # ? ?????: ????????? ????????????!
+    show-sql: true
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    # contexts: prod,test
+    # default-schema: public
+
+logging:
+  level:
+    com.example: DEBUG
