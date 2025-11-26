@@ -1,7 +1,7 @@
 -- src/main/resources/db/changelog/changes/V001__init_tables.sql
 --liquibase formatted sql
 
---changeset init:1 author:you
+--changeset init:1 author:mshchenyev
 --comment: Создание таблиц документов, спецификаций и лога дубликатов
 
 CREATE TABLE document (

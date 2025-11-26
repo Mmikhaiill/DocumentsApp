@@ -13,9 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
-import ru.docapp.documentapp.dto.SpecificationDto;
-import ru.docapp.documentapp.repositories.DocumentRepository;
-import ru.docapp.documentapp.services.DocumentService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,7 +32,7 @@ private DocumentService documentService;
 private DocumentRepository documentRepository;
 
 @MockBean
-private DuplicateLogService duplicateLogService; // mock, чтобы не писать в БД
+private DuplicateLogService duplicateLogService;
 
 @BeforeEach
 void clean() {

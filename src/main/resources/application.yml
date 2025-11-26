@@ -16,6 +16,15 @@ spring:
     # contexts: prod,test
     # default-schema: public
 
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+  packages-to-scan: ru.docapp.documentapp.controllers
+
+
 logging:
   level:
     com.example: DEBUG

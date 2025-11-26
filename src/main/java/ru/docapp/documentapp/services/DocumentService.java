@@ -1,7 +1,9 @@
 package ru.docapp.documentapp.services;
 
+import org.springframework.transaction.annotation.Isolation;
 import ru.docapp.documentapp.dto.DocumentDto;
 import ru.docapp.documentapp.dto.DuplicateLogEntry;
+import ru.docapp.documentapp.exceptions.DocumentNotFoundException;
 import ru.docapp.documentapp.exceptions.DuplicateDocumentNumberException;
 import ru.docapp.documentapp.entities.Document;
 import ru.docapp.documentapp.entities.Specification;
@@ -11,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class DocumentService {
     private final DocumentRepository documentRepository;
     private final DuplicateLogService duplicateLogService;
 
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Document createDocument(DocumentDto dto) {
         if (documentRepository.findByNumber(dto.number()).isPresent()) {
             DuplicateLogEntry entry = new DuplicateLogEntry(
@@ -37,7 +38,6 @@ public class DocumentService {
                 .note(dto.note())
                 .build();
 
-        // Сначала добавляем спецификации
         for (var specDto : dto.specifications()) {
             Specification spec = Specification.builder()
                     .name(specDto.name())
@@ -47,19 +47,16 @@ public class DocumentService {
             doc.addSpecification(spec);
         }
 
-        // Пересчитываем ДО сохранения
         doc.recalculateAmount();
 
-        // Теперь amount != null → можно сохранять
         return documentRepository.save(doc);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Document updateDocument(Long id, DocumentDto dto) {
         Document doc = documentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Document not found: " + id));
 
-        // Проверка дубликата номера только если он изменился
         if (!doc.getNumber().equals(dto.number())) {
             if (documentRepository.findByNumber(dto.number()).isPresent()) {
                 DuplicateLogEntry entry = new DuplicateLogEntry(
@@ -75,11 +72,10 @@ public class DocumentService {
         doc.setDate(dto.date());
         doc.setNote(dto.note());
 
-        // Очистка старых спецификаций и замена новыми
         doc.getSpecifications().clear();
         for (var specDto : dto.specifications()) {
             Specification spec = Specification.builder()
-                    .id(specDto.id()) // null → создание, non-null → обновление (но проще пересоздать)
+                    .id(specDto.id())
                     .name(specDto.name())
                     .amount(specDto.amount())
                     .document(doc)
@@ -94,7 +90,7 @@ public class DocumentService {
     @Transactional
     public void deleteDocument(Long id) {
         if (!documentRepository.existsById(id)) {
-            throw new IllegalArgumentException("Document not found: " + id);
+            throw new DocumentNotFoundException("Document not found: " + id);
         }
         documentRepository.deleteById(id);
     }
@@ -105,6 +101,6 @@ public class DocumentService {
 
     public Document getDocumentWithSpecifications(Long id) {
         return documentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Document not found: " + id));
+                .orElseThrow(() -> new DocumentNotFoundException("Document not found: " + id));
     }
 }

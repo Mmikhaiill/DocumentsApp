@@ -1,6 +1,6 @@
 package ru.docapp.documentapp.services;
 
-import ru.docapp.documentapp.services.DuplicateLogService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -20,7 +20,7 @@ public class DuplicateLogService {
 
     private final JdbcTemplate jdbcTemplate;
 
-    @Async  // необязательно, но безопасно — логирование не должно падать основной транзакцией
+    @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void logDuplicate(DuplicateLogEntry entry) {
         try {
@@ -34,7 +34,6 @@ public class DuplicateLogService {
             log.info("Duplicate logged: {} = {}", entry.getEntityType(), entry.getDuplicateValue());
         } catch (DataAccessException e) {
             log.error("Failed to log duplicate entry: {}", entry, e);
-            // Не пробрасываем — логирование не критично
         }
     }
 }

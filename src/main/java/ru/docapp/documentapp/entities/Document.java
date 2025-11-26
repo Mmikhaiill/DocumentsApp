@@ -1,6 +1,7 @@
 package ru.docapp.documentapp.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,16 +37,15 @@ public class Document {
     @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("id ASC")
     @Builder.Default
+    @JsonManagedReference
     private List<Specification> specifications = new ArrayList<>();
 
-    // Пересчёт суммы на основе спецификаций
     public void recalculateAmount() {
         this.amount = specifications.stream()
                 .map(Specification::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    // Утилиты для связывания
     public void addSpecification(Specification spec) {
         spec.setDocument(this);
         this.specifications.add(spec);
