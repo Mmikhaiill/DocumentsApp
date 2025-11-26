@@ -88,11 +88,9 @@ public class DocumentService {
 
     private void syncSpecifications(Document doc, List<SpecificationDto> specs) {
 
-        // удаляем отсутствующие
         doc.getSpecifications()
                 .removeIf(s -> specs.stream().noneMatch(dto -> dto.id() != null && dto.id().equals(s.getId())));
 
-        // обновляем / добавляем
         for (var dto : specs) {
             Specification existing = null;
 

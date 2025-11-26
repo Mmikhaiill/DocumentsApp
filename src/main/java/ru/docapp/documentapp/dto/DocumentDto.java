@@ -14,7 +14,6 @@ public record DocumentDto(
         @NotNull
         LocalDate date,
 
-        // amount — read-only, не обязателен для ввода
         BigDecimal amount,
 
         String note,
