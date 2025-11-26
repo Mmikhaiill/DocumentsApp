@@ -27,6 +27,10 @@ CREATE TABLE duplicate_log (
                                context TEXT
 );
 
+CREATE UNIQUE INDEX uq_specification_doc_name
+    ON specification (document_id, name);
+
+
 --rollback DROP TABLE duplicate_log;
 --rollback DROP TABLE specification;
 --rollback DROP TABLE document;

@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +19,6 @@ public class DuplicateLogService {
 
     private final JdbcTemplate jdbcTemplate;
 
-    @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void logDuplicate(DuplicateLogEntry entry) {
         try {
