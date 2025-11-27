@@ -5,7 +5,7 @@ Maven
 
 Инструкция по запуску
 
-1. Запустить PostgreSQL, создать базу db_name
+1. Запустить PostgreSQL, создать базу данных
 2. Скачать проект
 3. В проекте используется liquibase, он автоматически создаст необходимые таблицы
 4. Прописать в application.yml конфиги созданной бд ( у меня указаны url: jdbc:postgresql://localhost:5433/master_detail_db, username: postgres, password: rootroot)
